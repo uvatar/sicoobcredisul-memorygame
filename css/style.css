@@ -374,3 +374,66 @@ table th {
     margin-bottom: 5px;
     font-weight: bold;
 }
+
+/* Add these styles to the bottom of css/style.css */
+
+/* Disabled cards */
+.card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Game message */
+.game-message {
+    text-align: center;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.game-over {
+    color: #e74c3c;
+    background-color: #fadbd8;
+    border: 1px solid #e74c3c;
+}
+
+.game-won {
+    color: #27ae60;
+    background-color: #d5f5e3;
+    border: 1px solid #27ae60;
+}
+
+/* Settings form */
+.settings-section {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.settings-form .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.settings-form label {
+    margin-right: 10px;
+    min-width: 120px;
+    font-weight: bold;
+}
+
+.settings-form input[type="number"] {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.field-description {
+    margin-left: 10px;
+    color: #6c757d;
+    font-size: 14px;
+}

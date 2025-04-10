@@ -26,10 +26,30 @@ function initDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             player_id INTEGER NOT NULL,
             flips_count INTEGER NOT NULL,
+            won INTEGER NOT NULL DEFAULT 0,
             completed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (player_id) REFERENCES players(id)
         )
     ');
+    
+    // Create settings table
+    $db->exec('
+        CREATE TABLE IF NOT EXISTS game_settings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            setting_name TEXT NOT NULL UNIQUE,
+            setting_value TEXT NOT NULL,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ');
+    
+    // Insert default max flips setting if it doesn't exist
+    $stmt = $db->prepare('SELECT setting_value FROM game_settings WHERE setting_name = :name');
+    $stmt->bindValue(':name', 'max_flips');
+    $result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
+    
+    if (!$result) {
+        $db->exec('INSERT INTO game_settings (setting_name, setting_value) VALUES ("max_flips", "12")');
+    }
     
     return $db;
 }

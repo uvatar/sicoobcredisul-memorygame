@@ -2,10 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const cards = document.querySelectorAll('.card:not(.fixed)');
     const flipsCounter = document.getElementById('flips');
     const nextButton = document.querySelector('.next-button-container');
+    const gameMessage = document.getElementById('game-message');
     
     let flips = 0;
     let hasFlippedCard = false;
     let lockBoard = false;
+    let gameOver = false;
     let firstCard, secondCard;
     let matchedPairs = 0;
     
@@ -40,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function flipCard() {
         if (lockBoard) return;
+        if (gameOver) return;
         if (this === firstCard) return;
         
         this.classList.add('flipped');
@@ -48,6 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Update hidden input with current flips count
         document.getElementById('flips_count_input').value = flips;
+        
+        // Check if max flips reached
+        if (flips >= MAX_FLIPS) {
+            endGame(false);
+        }
         
         // Still send to server as backup
         fetch('update_flips.php', {
@@ -91,9 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Check if all pairs are matched
         if (matchedPairs === 4) {
-            setTimeout(() => {
-                nextButton.style.display = 'block';
-            }, 1000);
+            endGame(true);
         }
         
         resetBoard();
@@ -113,6 +119,37 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetBoard() {
         [hasFlippedCard, lockBoard] = [false, false];
         [firstCard, secondCard] = [null, null];
+    }
+    
+    function endGame(won) {
+        gameOver = true;
+        
+        // Update won state in hidden input
+        document.getElementById('game_won_input').value = won ? '1' : '0';
+        
+        if (!won) {
+            // Apply transparency effect to all unmatched cards
+            cards.forEach(card => {
+                if (!card.classList.contains('matched') && !card.classList.contains('fixed')) {
+                    card.classList.add('disabled');
+                }
+            });
+            
+            // Show game over message
+            gameMessage.textContent = `Game Over! You've used all ${MAX_FLIPS} flips.`;
+            gameMessage.classList.add('game-over');
+            gameMessage.style.display = 'block';
+        } else {
+            // Show win message
+            gameMessage.textContent = 'Congratulations! You found all pairs!';
+            gameMessage.classList.add('game-won');
+            gameMessage.style.display = 'block';
+        }
+        
+        // Show the next button
+        setTimeout(() => {
+            nextButton.style.display = 'block';
+        }, 1000);
     }
     
     // Initialize game

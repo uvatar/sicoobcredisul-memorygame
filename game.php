@@ -1,11 +1,19 @@
 <?php
 session_start();
+require_once 'database-init.php';
 
 // Redirect if user hasn't registered
 if (!isset($_SESSION['player_id'])) {
     header('Location: register.php');
     exit;
 }
+
+// Get maximum flips setting
+$db = initDatabase();
+$stmt = $db->prepare('SELECT setting_value FROM game_settings WHERE setting_name = :name');
+$stmt->bindValue(':name', 'max_flips');
+$result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
+$maxFlips = $result ? (int)$result['setting_value'] : 12;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +27,7 @@ if (!isset($_SESSION['player_id'])) {
     <div class="container">
         <h1>Memory Game</h1>
         <div class="game-info">
-            <p>Flips: <span id="flips">0</span></p>
+            <p>Flips: <span id="flips">0</span>/<span id="max-flips"><?= $maxFlips ?></span></p>
         </div>
         
         <div class="game-board">
@@ -41,14 +49,21 @@ if (!isset($_SESSION['player_id'])) {
             <div class="card" data-index="8"></div>
         </div>
         
+        <div id="game-message" class="game-message" style="display: none;"></div>
+        
         <div class="next-button-container" style="display: none;">
             <form method="post" action="result.php">
                 <input type="hidden" id="flips_count_input" name="flips_count" value="0">
+                <input type="hidden" id="game_won_input" name="game_won" value="1">
                 <button type="submit" class="btn next-btn">View Result</button>
             </form>
         </div>
     </div>
     
+    <script>
+        // Pass PHP variable to JavaScript
+        const MAX_FLIPS = <?= $maxFlips ?>;
+    </script>
     <script src="js/game.js"></script>
 </body>
 </html>

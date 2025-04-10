@@ -6,10 +6,11 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 // Set timezone to UTC-4
-$timezone = new DateTimeZone('America/New_York'); // Eastern Time (UTC-4/UTC-5)
+$timezone = new DateTimeZone('America/Porto_Velho'); // Eastern Time (UTC-4/UTC-5)
 
 $db = initDatabase();
 $action = $_GET['action'] ?? '';
+$message = '';
 
 // Handle delete action
 if ($action === 'delete' && isset($_POST['confirm']) && $_POST['confirm'] === 'yes') {
@@ -17,6 +18,26 @@ if ($action === 'delete' && isset($_POST['confirm']) && $_POST['confirm'] === 'y
     $db->exec('DELETE FROM players');
     $message = 'All data has been deleted.';
 }
+
+// Handle settings update
+if ($action === 'update_settings' && isset($_POST['max_flips'])) {
+    $maxFlips = (int)$_POST['max_flips'];
+    if ($maxFlips > 0) {
+        $stmt = $db->prepare('UPDATE game_settings SET setting_value = :value, updated_at = CURRENT_TIMESTAMP WHERE setting_name = :name');
+        $stmt->bindValue(':name', 'max_flips');
+        $stmt->bindValue(':value', $maxFlips);
+        $stmt->execute();
+        $message = 'Settings updated successfully.';
+    } else {
+        $message = 'Maximum flips must be greater than zero.';
+    }
+}
+
+// Get current max flips setting
+$stmt = $db->prepare('SELECT setting_value FROM game_settings WHERE setting_name = :name');
+$stmt->bindValue(':name', 'max_flips');
+$result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
+$maxFlips = $result ? (int)$result['setting_value'] : 12;
 
 // Handle export action
 if ($action === 'export') {
@@ -32,6 +53,7 @@ if ($action === 'export') {
     $sheet->setCellValue('E1', 'Phone');
     $sheet->setCellValue('F1', 'Terms Accepted');
     $sheet->setCellValue('G1', 'Flips Count');
+    $sheet->setCellValue('H1', 'Won Game');
     
     // Get data
     $query = '
@@ -42,7 +64,8 @@ if ($action === 'export') {
             p.ssn, 
             p.phone, 
             p.terms_accepted, 
-            gr.flips_count
+            gr.flips_count,
+            gr.won
         FROM 
             players p
         LEFT JOIN 
@@ -67,6 +90,7 @@ if ($action === 'export') {
         $sheet->setCellValue('E' . $row, $data['phone']);
         $sheet->setCellValue('F' . $row, $data['terms_accepted'] ? 'Yes' : 'No');
         $sheet->setCellValue('G' . $row, $data['flips_count'] ?? 'N/A');
+        $sheet->setCellValue('H' . $row, isset($data['won']) ? ($data['won'] ? 'Yes' : 'No') : 'N/A');
         $row++;
     }
     
@@ -91,7 +115,8 @@ $query = '
         p.ssn, 
         p.phone, 
         p.terms_accepted, 
-        gr.flips_count
+        gr.flips_count,
+        gr.won
     FROM 
         players p
     LEFT JOIN 
@@ -123,9 +148,21 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
     <div class="container admin-container">
         <h1>Administration</h1>
         
-        <?php if (isset($message)): ?>
+        <?php if ($message): ?>
             <div class="message"><?= $message ?></div>
         <?php endif; ?>
+        
+        <div class="settings-section">
+            <h2>Game Settings</h2>
+            <form method="post" action="admin.php?action=update_settings" class="settings-form">
+                <div class="form-group">
+                    <label for="max_flips">Maximum Flips:</label>
+                    <input type="number" id="max_flips" name="max_flips" value="<?= $maxFlips ?>" min="1" required>
+                    <p class="field-description">Maximum number of flips allowed before the game ends</p>
+                </div>
+                <button type="submit" class="btn">Update Settings</button>
+            </form>
+        </div>
         
         <div class="admin-actions">
             <a href="admin.php?action=export" class="btn export-btn">Export XLSX</a>
@@ -148,6 +185,7 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                             <th>Phone</th>
                             <th>Terms</th>
                             <th>Flips</th>
+                            <th>Won</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -160,6 +198,7 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                                 <td><?= htmlspecialchars($record['phone']) ?></td>
                                 <td><?= $record['terms_accepted'] ? 'Yes' : 'No' ?></td>
                                 <td><?= $record['flips_count'] ?? 'N/A' ?></td>
+                                <td><?= isset($record['won']) ? ($record['won'] ? 'Yes' : 'No') : 'N/A' ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
