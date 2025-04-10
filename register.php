@@ -7,7 +7,7 @@ $formData = [
     'name' => '',
     'ssn' => '',
     'phone' => '',
-    'terms' => false
+    'terms' => ''  // Changed from boolean to string
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $formData['name'] = trim($_POST['name'] ?? '');
     $formData['ssn'] = trim($_POST['ssn'] ?? '');
     $formData['phone'] = trim($_POST['phone'] ?? '');
-    $formData['terms'] = isset($_POST['terms']) && $_POST['terms'] === 'yes';
+    $formData['terms'] = $_POST['terms'] ?? '';  // Get the selected radio value
     
     // Basic validation
     if (empty($formData['name'])) {
@@ -46,8 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['phone'] = 'Phone must be in format (##) #####-####';
     }
     
-    if (!$formData['terms']) {
-        $errors['terms'] = 'You must accept the terms';
+    if (empty($formData['terms'])) {
+        $errors['terms'] = 'Please select an option';
     }
     
     // If no errors, save to database and redirect
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindValue(':name', $formData['name']);
         $stmt->bindValue(':ssn', $formData['ssn']);
         $stmt->bindValue(':phone', $formData['phone']);
-        $stmt->bindValue(':terms', $formData['terms'] ? 1 : 0, SQLITE3_INTEGER);
+        $stmt->bindValue(':terms', $formData['terms'] === 'yes' ? 1 : 0, SQLITE3_INTEGER);
         
         $stmt->execute();
         $playerId = $db->lastInsertRowID();
@@ -92,35 +92,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="post" action="" class="registration-form">
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" id="name" name="name" value="<?= htmlspecialchars($formData['name']) ?>">
+                <input type="text" id="name" name="name" value="<?= htmlspecialchars($formData['name']) ?>" class="<?= isset($errors['name']) ? 'has-error' : '' ?>">
                 <?php if (isset($errors['name'])): ?>
-                    <span class="error"><?= $errors['name'] ?></span>
+                    <div class="tooltip"><?= $errors['name'] ?></div>
                 <?php endif; ?>
             </div>
             
             <div class="form-group">
                 <label for="ssn">Social Security Number:</label>
-                <input type="text" id="ssn" name="ssn" placeholder="123.456.789-01" value="<?= htmlspecialchars($formData['ssn']) ?>">
+                <input type="text" id="ssn" name="ssn" placeholder="123.456.789-01" value="<?= htmlspecialchars($formData['ssn']) ?>" class="<?= isset($errors['ssn']) ? 'has-error' : '' ?>">
                 <?php if (isset($errors['ssn'])): ?>
-                    <span class="error"><?= $errors['ssn'] ?></span>
+                    <div class="tooltip"><?= $errors['ssn'] ?></div>
                 <?php endif; ?>
             </div>
             
             <div class="form-group">
                 <label for="phone">Phone Number:</label>
-                <input type="text" id="phone" name="phone" placeholder="(12) 34567-8901" value="<?= htmlspecialchars($formData['phone']) ?>">
+                <input type="text" id="phone" name="phone" placeholder="(12) 34567-8901" value="<?= htmlspecialchars($formData['phone']) ?>" class="<?= isset($errors['phone']) ? 'has-error' : '' ?>">
                 <?php if (isset($errors['phone'])): ?>
-                    <span class="error"><?= $errors['phone'] ?></span>
+                    <div class="tooltip"><?= $errors['phone'] ?></div>
                 <?php endif; ?>
             </div>
             
             <div class="form-group terms-group">
-                <label>
-                    <input type="checkbox" name="terms" value="yes" <?= $formData['terms'] ? 'checked' : '' ?>>
-                    I accept the terms and conditions
-                </label>
+                <label>Do you accept our terms?</label>
+                <div class="radio-group <?= isset($errors['terms']) ? 'has-error' : '' ?>">
+                    <label class="radio-label">
+                        <input type="radio" name="terms" value="yes" <?= $formData['terms'] === 'yes' ? 'checked' : '' ?>>
+                        Yes
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="terms" value="no" <?= $formData['terms'] === 'no' ? 'checked' : '' ?>>
+                        No
+                    </label>
+                </div>
                 <?php if (isset($errors['terms'])): ?>
-                    <span class="error"><?= $errors['terms'] ?></span>
+                    <div class="tooltip"><?= $errors['terms'] ?></div>
                 <?php endif; ?>
             </div>
             
@@ -132,6 +139,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $(document).ready(function(){
             $('#ssn').mask('000.000.000-00');
             $('#phone').mask('(00) 00000-0000');
+            
+            // Auto-hide tooltips after 1.5 seconds
+            setTimeout(function() {
+                $('.tooltip').fadeOut(300);
+            }, 1500);
         });
     </script>
 </body>

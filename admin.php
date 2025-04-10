@@ -5,6 +5,9 @@ require 'vendor/autoload.php'; // Include PhpSpreadsheet
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+// Set timezone to UTC-4
+$timezone = new DateTimeZone('America/New_York'); // Eastern Time (UTC-4/UTC-5)
+
 $db = initDatabase();
 $action = $_GET['action'] ?? '';
 
@@ -23,7 +26,7 @@ if ($action === 'export') {
     
     // Set headers
     $sheet->setCellValue('A1', 'ID');
-    $sheet->setCellValue('B1', 'Date/Time');
+    $sheet->setCellValue('B1', 'Date/Time (UTC-4)');
     $sheet->setCellValue('C1', 'Name');
     $sheet->setCellValue('D1', 'SSN');
     $sheet->setCellValue('E1', 'Phone');
@@ -52,8 +55,10 @@ if ($action === 'export') {
     $row = 2;
     
     while ($data = $result->fetchArray(SQLITE3_ASSOC)) {
-        // Format date for Excel
-        $formattedDate = date('d/m/Y H:i:s', strtotime($data['created_at']));
+        // Format date using UTC-4 timezone
+        $date = new DateTime($data['created_at'], new DateTimeZone('UTC'));
+        $date->setTimezone($timezone);
+        $formattedDate = $date->format('d/m/Y H:i:s');
         
         $sheet->setCellValue('A' . $row, $data['id']);
         $sheet->setCellValue('B' . $row, $formattedDate);
@@ -99,8 +104,10 @@ $result = $db->query($query);
 $records = [];
 
 while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-    // Format the date/time in the desired format
-    $row['formatted_date'] = date('d/m/Y H:i:s', strtotime($row['created_at']));
+    // Format the date/time with UTC-4 timezone
+    $date = new DateTime($row['created_at'], new DateTimeZone('UTC'));
+    $date->setTimezone($timezone);
+    $row['formatted_date'] = $date->format('d/m/Y H:i:s');
     $records[] = $row;
 }
 ?>
@@ -135,7 +142,7 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Date/Time</th>
+                            <th>Date/Time (UTC-4)</th>
                             <th>Name</th>
                             <th>SSN</th>
                             <th>Phone</th>
