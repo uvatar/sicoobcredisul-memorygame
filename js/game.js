@@ -11,10 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let firstCard, secondCard;
     let matchedPairs = 0;
     
-    // Card content (4 pairs of images)
+    
     const images = ['1.png', '2.png', '3.png', '4.png', '1.png', '2.png', '3.png', '4.png'];
     
-    // Shuffle images (Fisher-Yates algorithm)
+    
     function shuffleImages() {
         for (let i = images.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -22,11 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Initialize game
+    
     function initGame() {
         shuffleImages();
         
-        // Create card HTML structure
+        
         cards.forEach((card, index) => {
             card.innerHTML = `
                 <div class="card-inner">
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             card.addEventListener('click', flipCard);
-            card.classList.add('game-card'); // Add class for all cards
+            card.classList.add('game-card'); 
         });
     }
     
@@ -50,15 +50,15 @@ document.addEventListener('DOMContentLoaded', () => {
         flips++;
         flipsCounter.textContent = flips;
         
-        // Update hidden input with current flips count
+        
         document.getElementById('flips_count_input').value = flips;
         
-        // Check if max flips reached
+        
         if (flips >= MAX_FLIPS) {
             endGame(false);
         }
         
-        // Still send to server as backup
+        
         fetch('update_flips.php', {
             method: 'POST',
             headers: {
@@ -68,19 +68,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         if (!hasFlippedCard) {
-            // First card flipped
+            
             hasFlippedCard = true;
             firstCard = this;
             return;
         }
         
-        // Second card flipped
+        
         secondCard = this;
         checkForMatch();
     }
     
     function checkForMatch() {
-        // Check if the image sources match
+        
         const firstCardImage = firstCard.querySelector('.card-back img').src;
         const secondCardImage = secondCard.querySelector('.card-back img').src;
         
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         matchedPairs++;
         
-        // Check if all pairs are matched
+        
         if (matchedPairs === 4) {
             endGame(true);
         }
@@ -125,11 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function endGame(won) {
         gameOver = true;
         
-        // Update won state in hidden input
+        
         document.getElementById('game_won_input').value = won ? '1' : '0';
         
         if (!won) {
-            // Disable ALL cards when the game is over, including matched ones and central card
+            
             cards.forEach(card => {
                 if (!card.classList.contains('fixed')) {
                     card.classList.add('game-over-card');
@@ -139,23 +139,23 @@ document.addEventListener('DOMContentLoaded', () => {
             nextButton.style.display = 'block';
         }
             
-            // Show game over message
-//            gameMessage.textContent = `Game Over! You've used all ${MAX_FLIPS} flips.`;
-//            gameMessage.classList.add('game-over');
-//            gameMessage.style.display = 'block';
-//        } else {
-            // Show win message
-//            gameMessage.textContent = 'Congratulations! You found all pairs!';
-//            gameMessage.classList.add('game-won');
-//            gameMessage.style.display = 'block';
-//        }
+            
+
+
+
+
+            
+
+
+
+
         
-        // Show the next button
-//        setTimeout(() => {
-//            nextButton.style.display = 'block';
-//        }, 1000);
+        
+
+
+
     }
     
-    // Initialize game
+    
     initGame();
 });

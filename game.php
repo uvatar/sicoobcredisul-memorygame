@@ -2,13 +2,13 @@
 session_start();
 require_once 'database-init.php';
 
-// Redirect if user hasn't registered
+
 if (!isset($_SESSION['player_id'])) {
     header('Location: register.php');
     exit;
 }
 
-// Get maximum flips setting
+
 $db = initDatabase();
 $stmt = $db->prepare('SELECT setting_value FROM game_settings WHERE setting_name = :name');
 $stmt->bindValue(':name', 'max_flips');
@@ -55,7 +55,7 @@ include('header.php');
     </div>
     
     <script>
-        // Pass PHP variable to JavaScript
+        
         const MAX_FLIPS = <?= $maxFlips ?>;
     </script>
     <script src="js/game.js"></script>

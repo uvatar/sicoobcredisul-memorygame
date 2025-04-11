@@ -7,28 +7,28 @@ $formData = [
     'name' => '',
     'ssn' => '',
     'phone' => '',
-    'terms' => ''  // Changed from boolean to string
+    'terms' => ''  
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate inputs
+    
     $formData['name'] = trim($_POST['name'] ?? '');
     $formData['ssn'] = trim($_POST['ssn'] ?? '');
     $formData['phone'] = trim($_POST['phone'] ?? '');
-    $formData['terms'] = $_POST['terms'] ?? '';  // Get the selected radio value
+    $formData['terms'] = $_POST['terms'] ?? '';  
     
-    // Basic validation
+    
     if (empty($formData['name'])) {
         $errors['name'] = 'Nome obrigatório';
     }
     
-    // SSN validation (###.###.###-##)
+    
     if (empty($formData['ssn'])) {
         $errors['ssn'] = 'CPF obrigatório';
     } elseif (!preg_match('/^\d{3}\.\d{3}\.\d{3}-\d{2}$/', $formData['ssn'])) {
         $errors['ssn'] = 'CPF deve conter todos os dígitos';
     } else {
-        // Check if SSN is unique
+        
         $db = initDatabase();
         $stmt = $db->prepare('SELECT id FROM players WHERE ssn = :ssn');
         $stmt->bindValue(':ssn', $formData['ssn']);
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // Phone validation ((##) #####-####)
+    
     if (empty($formData['phone'])) {
         $errors['phone'] = 'Telefone obrigatório';
     } elseif (!preg_match('/^\(\d{2}\) \d{5}-\d{4}$/', $formData['phone'])) {
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['terms'] = 'Selecione uma opção';
     }
     
-    // If no errors, save to database and redirect
+    
     if (empty($errors)) {
         $db = initDatabase();
         
@@ -131,7 +131,7 @@ include('header.php');
             $('#ssn').mask('000.000.000-00');
             $('#phone').mask('(00) 00000-0000');
             
-            // Auto-hide tooltips after 1.5 seconds
+            
             setTimeout(function() {
                 $('.tooltip').fadeOut(300);
             }, 2500);

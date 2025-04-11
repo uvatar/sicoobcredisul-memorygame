@@ -1,25 +1,25 @@
 <?php
 require_once 'database-init.php';
-require 'vendor/autoload.php'; // Include PhpSpreadsheet
+require 'vendor/autoload.php'; 
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-// Set timezone to UTC-4
-$timezone = new DateTimeZone('America/Porto_Velho'); // Eastern Time (UTC-4/UTC-5)
+
+$timezone = new DateTimeZone('America/Porto_Velho'); 
 
 $db = initDatabase();
 $action = $_GET['action'] ?? '';
 $message = '';
 
-// Handle delete action
+
 if ($action === 'delete' && isset($_POST['confirm']) && $_POST['confirm'] === 'yes') {
     $db->exec('DELETE FROM game_results');
     $db->exec('DELETE FROM players');
     $message = 'Todos os dados foram apagados.';
 }
 
-// Handle settings update
+
 if ($action === 'update_settings' && isset($_POST['max_flips'])) {
     $maxFlips = (int)$_POST['max_flips'];
     if ($maxFlips > 0) {
@@ -33,19 +33,19 @@ if ($action === 'update_settings' && isset($_POST['max_flips'])) {
     }
 }
 
-// Get current max flips setting
+
 $stmt = $db->prepare('SELECT setting_value FROM game_settings WHERE setting_name = :name');
 $stmt->bindValue(':name', 'max_flips');
 $result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
 $maxFlips = $result ? (int)$result['setting_value'] : 12;
 
-// Handle export action
+
 if ($action === 'export') {
-    // Create a new spreadsheet
+    
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
     
-    // Set headers
+    
     $sheet->setCellValue('A1', 'ID');
     $sheet->setCellValue('B1', 'Data (UTC-4)');
     $sheet->setCellValue('C1', 'Nome');
@@ -55,7 +55,7 @@ if ($action === 'export') {
     $sheet->setCellValue('G1', 'Flips');
     $sheet->setCellValue('H1', 'Venceu');
     
-    // Get data
+    
     $query = '
         SELECT 
             p.id, 
@@ -78,7 +78,7 @@ if ($action === 'export') {
     $row = 2;
     
     while ($data = $result->fetchArray(SQLITE3_ASSOC)) {
-        // Format date using UTC-4 timezone
+        
         $date = new DateTime($data['created_at'], new DateTimeZone('UTC'));
         $date->setTimezone($timezone);
         $formattedDate = $date->format('d/m/Y H:i:s');
@@ -94,7 +94,7 @@ if ($action === 'export') {
         $row++;
     }
     
-    // Create the XLSX file
+    
     $writer = new Xlsx($spreadsheet);
     $filename = 'jogodamemoria_resultados_' . date('Y-m-d_H-i-s') . '.xlsx';
     
@@ -106,7 +106,7 @@ if ($action === 'export') {
     exit;
 }
 
-// Fetch all records for display
+
 $query = '
     SELECT 
         p.id, 
@@ -129,7 +129,7 @@ $result = $db->query($query);
 $records = [];
 
 while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-    // Format the date/time with UTC-4 timezone
+    
     $date = new DateTime($row['created_at'], new DateTimeZone('UTC'));
     $date->setTimezone($timezone);
     $row['formatted_date'] = $date->format('d/m/Y H:i:s');
