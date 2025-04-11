@@ -37,31 +37,23 @@ $stmt = $db->prepare('SELECT setting_value FROM game_settings WHERE setting_name
 $stmt->bindValue(':name', 'max_flips');
 $result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
 $maxFlips = $result ? (int)$result['setting_value'] : 12;
+
+include('header.php');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Result - Memory Game</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+<body class="resultado">
     <div class="container">
-        <h1>Game Result</h1>
         
         <div class="result-container">
             <?php if ($gameWon): ?>
-                <h2>Congratulations, <?= htmlspecialchars($playerName) ?>!</h2>
-                <p>You completed the memory game in <strong><?= $flipsCount ?></strong> flips!</p>
+                <img src="images/img-vitoria.svg" alt="" class="img-vitoria">
             <?php else: ?>
-                <h2>Game Over, <?= htmlspecialchars($playerName) ?>!</h2>
-                <p>You used all <strong><?= $maxFlips ?></strong> flips without finding all pairs.</p>
-                <p>Better luck next time!</p>
+                <img src="images/img-derrota.svg" alt="" class="img-derrota">
             <?php endif; ?>
             
             <div class="result-actions">
-                <a href="index.php" class="btn restart-btn">Play Again</a>
+                <a href="index.php" class="btn restart-btn">
+                    <img src="images/img-voltar.svg" alt="" class="img-voltar">
+                </a>
             </div>
         </div>
     </div>

@@ -16,7 +16,7 @@ $message = '';
 if ($action === 'delete' && isset($_POST['confirm']) && $_POST['confirm'] === 'yes') {
     $db->exec('DELETE FROM game_results');
     $db->exec('DELETE FROM players');
-    $message = 'All data has been deleted.';
+    $message = 'Todos os dados foram apagados.';
 }
 
 // Handle settings update
@@ -27,9 +27,9 @@ if ($action === 'update_settings' && isset($_POST['max_flips'])) {
         $stmt->bindValue(':name', 'max_flips');
         $stmt->bindValue(':value', $maxFlips);
         $stmt->execute();
-        $message = 'Settings updated successfully.';
+        $message = 'Configuração alterada.';
     } else {
-        $message = 'Maximum flips must be greater than zero.';
+        $message = 'Número máximo de flips deve ser maior que 0.';
     }
 }
 
@@ -47,13 +47,13 @@ if ($action === 'export') {
     
     // Set headers
     $sheet->setCellValue('A1', 'ID');
-    $sheet->setCellValue('B1', 'Date/Time (UTC-4)');
-    $sheet->setCellValue('C1', 'Name');
-    $sheet->setCellValue('D1', 'SSN');
-    $sheet->setCellValue('E1', 'Phone');
-    $sheet->setCellValue('F1', 'Terms Accepted');
-    $sheet->setCellValue('G1', 'Flips Count');
-    $sheet->setCellValue('H1', 'Won Game');
+    $sheet->setCellValue('B1', 'Data (UTC-4)');
+    $sheet->setCellValue('C1', 'Nome');
+    $sheet->setCellValue('D1', 'CPF');
+    $sheet->setCellValue('E1', 'Telefone');
+    $sheet->setCellValue('F1', 'Cooperado');
+    $sheet->setCellValue('G1', 'Flips');
+    $sheet->setCellValue('H1', 'Venceu');
     
     // Get data
     $query = '
@@ -88,15 +88,15 @@ if ($action === 'export') {
         $sheet->setCellValue('C' . $row, $data['name']);
         $sheet->setCellValue('D' . $row, $data['ssn']);
         $sheet->setCellValue('E' . $row, $data['phone']);
-        $sheet->setCellValue('F' . $row, $data['terms_accepted'] ? 'Yes' : 'No');
+        $sheet->setCellValue('F' . $row, $data['terms_accepted'] ? 'Sim' : 'Não');
         $sheet->setCellValue('G' . $row, $data['flips_count'] ?? 'N/A');
-        $sheet->setCellValue('H' . $row, isset($data['won']) ? ($data['won'] ? 'Yes' : 'No') : 'N/A');
+        $sheet->setCellValue('H' . $row, isset($data['won']) ? ($data['won'] ? 'Sim' : 'Não') : 'N/A');
         $row++;
     }
     
     // Create the XLSX file
     $writer = new Xlsx($spreadsheet);
-    $filename = 'memory_game_data_' . date('Y-m-d_H-i-s') . '.xlsx';
+    $filename = 'jogodamemoria_resultados_' . date('Y-m-d_H-i-s') . '.xlsx';
     
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -141,51 +141,52 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Memory Game</title>
+    <title>Administração</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container admin-container">
-        <h1>Administration</h1>
+        <h1>Administração</h1>
         
         <?php if ($message): ?>
             <div class="message"><?= $message ?></div>
         <?php endif; ?>
         
         <div class="settings-section">
-            <h2>Game Settings</h2>
+            <h2>Configurações</h2>
             <form method="post" action="admin.php?action=update_settings" class="settings-form">
                 <div class="form-group">
-                    <label for="max_flips">Maximum Flips:</label>
+                    <label class="admin-flips" for="max_flips">Flips</label>
                     <input type="number" id="max_flips" name="max_flips" value="<?= $maxFlips ?>" min="1" required>
-                    <p class="field-description">Maximum number of flips allowed before the game ends</p>
+                    <p class="field-description">Número máximo de flips permitidos antes do fim do jogo</p>
                 </div>
-                <button type="submit" class="btn">Update Settings</button>
+                <button type="submit" class="btn admin-btn">Atualizar</button>
             </form>
         </div>
         
         <div class="admin-actions">
-            <a href="admin.php?action=export" class="btn export-btn">Export XLSX</a>
-            <button class="btn delete-btn" onclick="confirmDelete()">Delete All Data</button>
+            <a href="index.php" class="btn admin-btn">Voltar para o jogo</a>
+            <a href="admin.php?action=export" class="btn export-btn">Exportar</a>
+            <button class="btn delete-btn" onclick="confirmDelete()">Apagar tudo</button>
         </div>
         
         <div class="data-table">
-            <h2>Player Records (<?= count($records) ?>)</h2>
+            <h2>Participantes (<?= count($records) ?>)</h2>
             
             <?php if (empty($records)): ?>
-                <p>No records found.</p>
+                <p>Nenhum participantes encontrado.</p>
             <?php else: ?>
                 <table>
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Date/Time (UTC-4)</th>
-                            <th>Name</th>
-                            <th>SSN</th>
-                            <th>Phone</th>
-                            <th>Terms</th>
+                            <th>Data</th>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Telefone</th>
+                            <th>Cooperado</th>
                             <th>Flips</th>
-                            <th>Won</th>
+                            <th>Venceu</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -196,27 +197,28 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
                                 <td><?= htmlspecialchars($record['name']) ?></td>
                                 <td><?= htmlspecialchars($record['ssn']) ?></td>
                                 <td><?= htmlspecialchars($record['phone']) ?></td>
-                                <td><?= $record['terms_accepted'] ? 'Yes' : 'No' ?></td>
+                                <td><?= $record['terms_accepted'] ? 'Sim' : 'Não' ?></td>
                                 <td><?= $record['flips_count'] ?? 'N/A' ?></td>
-                                <td><?= isset($record['won']) ? ($record['won'] ? 'Yes' : 'No') : 'N/A' ?></td>
+                                <td><?= isset($record['won']) ? ($record['won'] ? 'Sim' : 'Não') : 'N/A' ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php endif; ?>
         </div>
+
     </div>
     
     <!-- Delete Confirmation Dialog -->
     <div id="delete-dialog" class="dialog" style="display: none;">
         <div class="dialog-content">
-            <h3>Confirm Deletion</h3>
-            <p>Are you sure you want to delete all data? This action cannot be undone.</p>
+            <h3>Confirmar a exclusão</h3>
+            <p>Tem certeza que quer apagar todos os dados? Essa ação não pode ser desfeita.</p>
             <form method="post" action="admin.php?action=delete">
                 <input type="hidden" name="confirm" value="yes">
                 <div class="dialog-buttons">
-                    <button type="submit" class="btn delete-confirm-btn">Yes, Delete All</button>
-                    <button type="button" class="btn cancel-btn" onclick="closeDialog()">Cancel</button>
+                    <button type="submit" class="btn delete-confirm-btn">Excluir</button>
+                    <button type="button" class="btn admin-btn" onclick="closeDialog()">Cancelar</button>
                 </div>
             </form>
         </div>

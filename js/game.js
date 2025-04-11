@@ -32,11 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="card-inner">
                     <div class="card-front"></div>
                     <div class="card-back">
-                        <img src="images/${images[index]}" alt="Card Image">
+                        <img src="images/${images[index]}" alt="Card Image" class="card-image">
                     </div>
                 </div>
             `;
             card.addEventListener('click', flipCard);
+            card.classList.add('game-card'); // Add class for all cards
         });
     }
     
@@ -128,28 +129,31 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('game_won_input').value = won ? '1' : '0';
         
         if (!won) {
-            // Apply transparency effect to all unmatched cards
+            // Disable ALL cards when the game is over, including matched ones and central card
             cards.forEach(card => {
-                if (!card.classList.contains('matched') && !card.classList.contains('fixed')) {
-                    card.classList.add('disabled');
+                if (!card.classList.contains('fixed')) {
+                    card.classList.add('game-over-card');
                 }
             });
+
+            nextButton.style.display = 'block';
+        }
             
             // Show game over message
-            gameMessage.textContent = `Game Over! You've used all ${MAX_FLIPS} flips.`;
-            gameMessage.classList.add('game-over');
-            gameMessage.style.display = 'block';
-        } else {
+//            gameMessage.textContent = `Game Over! You've used all ${MAX_FLIPS} flips.`;
+//            gameMessage.classList.add('game-over');
+//            gameMessage.style.display = 'block';
+//        } else {
             // Show win message
-            gameMessage.textContent = 'Congratulations! You found all pairs!';
-            gameMessage.classList.add('game-won');
-            gameMessage.style.display = 'block';
-        }
+//            gameMessage.textContent = 'Congratulations! You found all pairs!';
+//            gameMessage.classList.add('game-won');
+//            gameMessage.style.display = 'block';
+//        }
         
         // Show the next button
-        setTimeout(() => {
-            nextButton.style.display = 'block';
-        }, 1000);
+//        setTimeout(() => {
+//            nextButton.style.display = 'block';
+//        }, 1000);
     }
     
     // Initialize game

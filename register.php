@@ -19,14 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Basic validation
     if (empty($formData['name'])) {
-        $errors['name'] = 'Name is required';
+        $errors['name'] = 'Nome obrigatório';
     }
     
     // SSN validation (###.###.###-##)
     if (empty($formData['ssn'])) {
-        $errors['ssn'] = 'Social security number is required';
+        $errors['ssn'] = 'CPF obrigatório';
     } elseif (!preg_match('/^\d{3}\.\d{3}\.\d{3}-\d{2}$/', $formData['ssn'])) {
-        $errors['ssn'] = 'SSN must be in format ###.###.###-##';
+        $errors['ssn'] = 'CPF deve conter todos os dígitos';
     } else {
         // Check if SSN is unique
         $db = initDatabase();
@@ -35,19 +35,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);
         
         if ($result) {
-            $errors['ssn'] = 'This SSN has already been registered. You can only play once.';
+            $errors['ssn'] = 'Parece que você já participou!';
         }
     }
     
     // Phone validation ((##) #####-####)
     if (empty($formData['phone'])) {
-        $errors['phone'] = 'Phone number is required';
+        $errors['phone'] = 'Telefone obrigatório';
     } elseif (!preg_match('/^\(\d{2}\) \d{5}-\d{4}$/', $formData['phone'])) {
-        $errors['phone'] = 'Phone must be in format (##) #####-####';
+        $errors['phone'] = 'Telefone deve conter todos os dígitos';
     }
     
     if (empty($formData['terms'])) {
-        $errors['terms'] = 'Please select an option';
+        $errors['terms'] = 'Selecione uma opção';
     }
     
     // If no errors, save to database and redirect
@@ -74,24 +74,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
+
+include('header.php');
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration - Memory Game</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/jquery-3.7.1.min.js"></script>
-    <script src="js/jquery.mask.min.js"></script>
-</head>
-<body>
-    <div class="container">
-        <h1>Player Registration</h1>
-        
+<body class="registro">
+    <div class="container ctn-registro">
+    <img src="images/img-registro.svg" alt="Queremos conhecer você" class="img-registro">
         <form method="post" action="" class="registration-form">
             <div class="form-group">
-                <label for="name">Name:</label>
+                <label for="name">Nome</label>
                 <input type="text" id="name" name="name" value="<?= htmlspecialchars($formData['name']) ?>" class="<?= isset($errors['name']) ? 'has-error' : '' ?>">
                 <?php if (isset($errors['name'])): ?>
                     <div class="tooltip"><?= $errors['name'] ?></div>
@@ -99,31 +90,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             
             <div class="form-group">
-                <label for="ssn">Social Security Number:</label>
-                <input type="text" id="ssn" name="ssn" placeholder="123.456.789-01" value="<?= htmlspecialchars($formData['ssn']) ?>" class="<?= isset($errors['ssn']) ? 'has-error' : '' ?>">
+                <label for="ssn">CPF</label>
+                <input type="text" id="ssn" name="ssn" placeholder="###.###.###-##" value="<?= htmlspecialchars($formData['ssn']) ?>" class="<?= isset($errors['ssn']) ? 'has-error' : '' ?>">
                 <?php if (isset($errors['ssn'])): ?>
                     <div class="tooltip"><?= $errors['ssn'] ?></div>
                 <?php endif; ?>
             </div>
             
             <div class="form-group">
-                <label for="phone">Phone Number:</label>
-                <input type="text" id="phone" name="phone" placeholder="(12) 34567-8901" value="<?= htmlspecialchars($formData['phone']) ?>" class="<?= isset($errors['phone']) ? 'has-error' : '' ?>">
+                <label for="phone">Telefone</label>
+                <input type="text" id="phone" name="phone" placeholder="(##) #####-####" value="<?= htmlspecialchars($formData['phone']) ?>" class="<?= isset($errors['phone']) ? 'has-error' : '' ?>">
                 <?php if (isset($errors['phone'])): ?>
                     <div class="tooltip"><?= $errors['phone'] ?></div>
                 <?php endif; ?>
             </div>
             
             <div class="form-group terms-group">
-                <label>Do you accept our terms?</label>
+                <label>É cooperado da Sicoob Credisul?</label>
                 <div class="radio-group <?= isset($errors['terms']) ? 'has-error' : '' ?>">
                     <label class="radio-label">
                         <input type="radio" name="terms" value="yes" <?= $formData['terms'] === 'yes' ? 'checked' : '' ?>>
-                        Yes
+                        Sim
                     </label>
                     <label class="radio-label">
                         <input type="radio" name="terms" value="no" <?= $formData['terms'] === 'no' ? 'checked' : '' ?>>
-                        No
+                        Não
                     </label>
                 </div>
                 <?php if (isset($errors['terms'])): ?>
@@ -131,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
             </div>
             
-            <button type="submit" class="btn">Continue to Game</button>
+            <button type="submit" class="btn btn-registro">Começar</button>
         </form>
     </div>
     
@@ -143,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Auto-hide tooltips after 1.5 seconds
             setTimeout(function() {
                 $('.tooltip').fadeOut(300);
-            }, 1500);
+            }, 2500);
         });
     </script>
 </body>

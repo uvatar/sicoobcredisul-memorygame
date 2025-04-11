@@ -1,17 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Game</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+<?php
+include('header.php');
+?>
+<body class="inicio">
     <div class="container">
-        <h1>Memory Game</h1>
-        <div class="start-screen">
-            <a href="register.php" class="btn start-btn">Start Game</a>
-        </div>
+        <a href="register.php">
+            <img src="images/img-inicio.svg" alt="" class="img-inicio">
+        </a>
+
+        <a href="admin.php" >
+            <img src="images/img-admin.svg" alt="" class="img-admin">
+        </a>
     </div>
 </body>
 </html>
