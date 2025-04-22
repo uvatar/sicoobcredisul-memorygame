@@ -59,6 +59,7 @@ include('header.php');
     </div>
 </body>
 </html>
+
 <?php
 // Clear the session when player sees the results
 session_destroy();

@@ -32,7 +32,6 @@ function initDatabase() {
         )
     ');
     
-    // Create settings table
     $db->exec('
         CREATE TABLE IF NOT EXISTS game_settings (
             id INTEGER PRIMARY KEY AUTOINCREMENT,

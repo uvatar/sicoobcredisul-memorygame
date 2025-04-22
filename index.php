@@ -1,6 +1,7 @@
 <?php
 include('header.php');
 ?>
+
 <body class="inicio">
     <div class="container">
         <a href="register.php">

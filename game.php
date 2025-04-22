@@ -17,6 +17,7 @@ $maxFlips = $result ? (int)$result['setting_value'] : 12;
 
 include('header.php');
 ?>
+
 <body class="jogo">
     <div class="container ctn-jogo">
         <img src="images/img-jogo.svg" alt="Queremos conhecer você" class="img-jogo">

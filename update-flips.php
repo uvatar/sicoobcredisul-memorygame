@@ -4,7 +4,7 @@ session_start();
 // Make sure the player is registered
 if (!isset($_SESSION['player_id'])) {
     http_response_code(403);
-    exit('Not authorized');
+    exit('Não autorização');
 }
 
 // Get the flips count from the request

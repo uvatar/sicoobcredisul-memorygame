@@ -32,7 +32,6 @@
 body {
     font-family: 'Sicoob sans', sans-serif;
     min-height: 100vh;
-    /* Add display flex for centering (except admin page) */
     display: flex;
     align-items: center;
     justify-content: center;

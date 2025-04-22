@@ -6,7 +6,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 // Set timezone to UTC-4
-$timezone = new DateTimeZone('America/Porto_Velho'); // Eastern Time (UTC-4/UTC-5)
+$timezone = new DateTimeZone('America/Porto_Velho'); // Eastern Time (UTC-4)
 
 $db = initDatabase();
 $action = $_GET['action'] ?? '';

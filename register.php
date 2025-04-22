@@ -77,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include('header.php');
 ?>
+
 <body class="registro">
     <div class="container ctn-registro">
     <img src="images/img-registro.svg" alt="Queremos conhecer você" class="img-registro">

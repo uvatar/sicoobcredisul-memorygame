@@ -7,7 +7,7 @@
 <title>Jogo da Memória - Sicoob Credisul</title>
 <link rel="icon" href="favicon.ico">
 <meta name="theme-color" content="#003D43">
-<link href="css/style.css" rel="stylesheet">
 <script src="js/jquery-3.7.1.min.js"></script>
 <script src="js/jquery.mask.min.js"></script>
+<link href="css/style.css" rel="stylesheet">
 </head>

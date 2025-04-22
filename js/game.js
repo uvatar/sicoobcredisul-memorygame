@@ -139,18 +139,17 @@ document.addEventListener('DOMContentLoaded', () => {
             nextButton.style.display = 'block';
         }
             
-            // Show game over message
+// Show game over message
 //            gameMessage.textContent = `Game Over! You've used all ${MAX_FLIPS} flips.`;
 //            gameMessage.classList.add('game-over');
 //            gameMessage.style.display = 'block';
 //        } else {
-            // Show win message
+// Show win message
 //            gameMessage.textContent = 'Congratulations! You found all pairs!';
 //            gameMessage.classList.add('game-won');
 //            gameMessage.style.display = 'block';
 //        }
-        
-        // Show the next button
+// Show the next button
 //        setTimeout(() => {
 //            nextButton.style.display = 'block';
 //        }, 1000);
