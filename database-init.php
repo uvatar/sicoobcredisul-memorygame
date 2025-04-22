@@ -9,7 +9,7 @@ function initDatabase() {
     
     $db = new SQLite3($dbFile);
     
-    // Create tables if they don't exist
+    
     $db->exec('
         CREATE TABLE IF NOT EXISTS players (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,7 +41,7 @@ function initDatabase() {
         )
     ');
     
-    // Insert default max flips setting if it doesn't exist
+    
     $stmt = $db->prepare('SELECT setting_value FROM game_settings WHERE setting_name = :name');
     $stmt->bindValue(':name', 'max_flips');
     $result = $stmt->execute()->fetchArray(SQLITE3_ASSOC);

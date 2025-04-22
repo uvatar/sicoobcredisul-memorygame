@@ -52,10 +52,10 @@ body {
 
 .jogo, .resultado {
     background-color: var(--ver);
-    background-image: url(../images/bg-jogo.svg);
+    background-image: url(../images/bg-resultado.png);
 }
 
-/* Admin page should not be centered vertically */
+
 body.admin-page {
     display: block;
 }
@@ -99,7 +99,7 @@ h2 {
 }
 
 
-/* Buttons */
+
 .btn {
     display: inline-block;
     font-family: 'Sicoob sans', sans-serif;
@@ -166,7 +166,7 @@ h2 {
     100% { transform: scale(1); }
 }
 
-/* Registration Form */
+
 .ctn-registro {
     display: flex;
     flex-direction: column;
@@ -181,7 +181,7 @@ h2 {
 
 .registration-form {
     max-width: 100%;
-    /*margin: 0 auto;*/
+   
 }
 
 .form-group {
@@ -231,7 +231,7 @@ h2 {
     margin-right: 30px;
 }
 
-/* Game Board */
+
 .game-info {
     display: none;
 }
@@ -326,7 +326,7 @@ h2 {
     left: 90px;
 }
 
-/* Result Screen */
+
 .result-container {
     text-align: center;
     padding: 60px;
@@ -337,7 +337,7 @@ h2 {
 }
 
 .img-voltar {
-    width: 200px;
+    width: 150px;
     height: auto;
     transition: fill 0.3s ease;
     animation: rotate 10s linear infinite;
@@ -349,7 +349,7 @@ h2 {
     100% { transform: rotate(360deg); }
   }
 
-/* Admin Page */
+
 .admin-container {
     max-width: 1000px;
 }
@@ -380,7 +380,7 @@ table th {
     background-color: #f2f2f2;
 }
 
-/* Dialog */
+
 .dialog {
     position: fixed;
     top: 0;
@@ -422,7 +422,7 @@ table th {
     margin-bottom: 20px;
 }
 
-/* Tooltip error styles */
+
 
 .has-error {
     border-color: var(--rox) !important;
@@ -447,16 +447,7 @@ table th {
     max-width: 100%;
 }
 
-/*.tooltip::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: var(--rox);
-}*/
+
 
 @keyframes fadeIn {
     from {
@@ -470,20 +461,20 @@ table th {
 }
 
 
-/* Disabled cards */
+
 .card.disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
-/* Add game-over-card class for when all cards should be disabled */
+
 .card.game-over-card {
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
 }
 
-/* Game message */
+
 .game-message {
     text-align: center;
     margin: 20px 0;
@@ -504,7 +495,7 @@ table th {
     border: 1px solid #27ae60;
 }
 
-/* Settings form */
+
 .settings-section {
     background-color: #f8f9fa;
     border-radius: 4px;
@@ -538,7 +529,7 @@ table th {
     font-size: 24px;
 }
 
-/* New classes for elements */
+
 .page-wrapper {
     width: 100%;
 }

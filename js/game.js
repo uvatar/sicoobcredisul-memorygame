@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let firstCard, secondCard;
     let matchedPairs = 0;
     
-    // Card content (4 pairs of images)
+
     const images = ['1.png', '2.png', '3.png', '4.png', '1.png', '2.png', '3.png', '4.png'];
     
     // Shuffle images (Fisher-Yates algorithm)
